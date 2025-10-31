@@ -17,6 +17,8 @@ public class Main {
 
         Set<String> stopwords = FileUtils.loadStopwords(stopPath);
         Map<String, String> lemmas = FileUtils.loadLemmas(lemmaPath);
+        String s = "watching";
+        System.out.println(lemmas.get(s));
 
         DocumentProcessor dp = new DocumentProcessor(stopwords, lemmas);
         Map<String, List<String>> corpus = dp.loadAndProcessCorpus(corpusDir);

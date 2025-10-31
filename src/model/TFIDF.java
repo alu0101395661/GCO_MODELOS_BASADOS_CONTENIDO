@@ -27,29 +27,34 @@ public class TFIDF {
         vocab.addAll(allTerms);
         vocab.sort(String::compareTo);
 
-        int N = corpus.size();
+        int N = 0;
+        for (List<String> f : corpus.values()) {
+            N += f.size();
+        }
+        
 
         // 🔹 Calcular IDF = log(N / df)
         for (String term : vocab) {
             int df = 0;
             for (List<String> docTokens : corpus.values()) {
-                if (docTokens.contains(term)) df++;
+                for (String s : docTokens) {
+                    if (s.equals(term)) { df++; }
+                }
             }
-            idf.put(term, Math.log((double) N / (df + 1)));
+            idf.put(term, Math.log((double) N / df));
         }
 
         // 🔹 Calcular TF y TF-IDF
         for (String doc : docNames) {
             List<String> tokens = corpus.get(doc);
-            Map<String, Long> freq = tokens.stream()
-                    .collect(Collectors.groupingBy(t -> t, Collectors.counting()));
-            double total = tokens.size();
+            Map<String, Long> freq = tokens.stream().collect(Collectors.groupingBy(t -> t, Collectors.counting()));
 
             Map<String, Double> tf = new LinkedHashMap<>();
             Map<String, Double> tfidf = new LinkedHashMap<>();
 
             for (String term : vocab) {
-                double tfVal = freq.getOrDefault(term, 0L) / total;
+                double tfVal = Math.log10((double) freq.getOrDefault(term, 1L)) + 1;
+                if (tfVal == 1) { tfVal = 0; }
                 double tfidfVal = tfVal * idf.get(term);
                 tf.put(term, tfVal);
                 tfidf.put(term, tfidfVal);
