@@ -58,12 +58,15 @@ public class FileUtils {
 
             try (PrintWriter pw = new PrintWriter(Path.of(outDir, doc + ".csv").toString(), StandardCharsets.UTF_8)) {
                 pw.println("index,term,TF,IDF,TF-IDF");
+                int index = 0;
                 for (int i = 0; i < vocab.size(); i++) {
                     String term = vocab.get(i);
+                    if (tfMap.get(term) == 0) continue;
                     double tf = tfMap.get(term);
                     double idf = idfMap.get(term);
                     double tfidfVal = tfidfMap.get(term);
-                    pw.printf(Locale.US, "%d,%s,%.6f,%.6f,%.6f%n", i, term, tf, idf, tfidfVal);
+                    pw.printf(Locale.US, "%d,%s,%.6f,%.6f,%.6f%n", index, term, tf, idf, tfidfVal);
+                    index++;
                 }
             }
         }

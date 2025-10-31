@@ -44,6 +44,8 @@ public class TFIDF {
             idf.put(term, Math.log((double) N / df));
         }
 
+        Map<String, Double> sumVec = new HashMap<>();
+
         // 🔹 Calcular TF y TF-IDF
         for (String doc : docNames) {
             List<String> tokens = corpus.get(doc);
@@ -52,11 +54,26 @@ public class TFIDF {
             Map<String, Double> tf = new LinkedHashMap<>();
             Map<String, Double> tfidf = new LinkedHashMap<>();
 
+            List<Double> tfValues = new ArrayList<>();
+
             for (String term : vocab) {
                 double tfVal = Math.log10((double) freq.getOrDefault(term, 1L)) + 1;
                 if (tfVal == 1) { tfVal = 0; }
-                double tfidfVal = tfVal * idf.get(term);
+                tfValues.add(tfVal);
                 tf.put(term, tfVal);
+            }
+
+            double sumCuad = 0;
+
+            for (double v : tfValues) {
+                sumCuad += v * v;
+            }
+
+            sumCuad = Math.sqrt(sumCuad);
+            sumVec.put(doc, sumCuad);
+
+            for (String term : vocab) {
+                double tfidfVal = tf.get(term) / sumVec.get(doc);
                 tfidf.put(term, tfidfVal);
             }
 

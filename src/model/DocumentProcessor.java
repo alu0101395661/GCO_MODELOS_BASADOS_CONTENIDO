@@ -9,7 +9,7 @@ public class DocumentProcessor {
 
     private final Set<String> stopwords;
     private final Map<String, String> lemmas;
-    private final Pattern tokenPattern = Pattern.compile("[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+");
+    private final Pattern tokenPattern = Pattern.compile("[A-Za-zÁÉÍÓÚÜÑáéíóúüñ’]+");
 
     public DocumentProcessor(Set<String> stopwords, Map<String, String> lemmas) {
         this.stopwords = stopwords;
@@ -36,8 +36,10 @@ public class DocumentProcessor {
     private List<String> processText(String text) {
         List<String> tokens = new ArrayList<>();
         Matcher m = tokenPattern.matcher(text.toLowerCase());
+        System.out.println(m);
         while (m.find()) {
             String word = m.group();
+            
             if (!stopwords.contains(word)) {
                 tokens.add(lemmas.getOrDefault(word, word));
             }

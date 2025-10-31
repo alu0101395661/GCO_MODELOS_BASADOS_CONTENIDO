@@ -6,16 +6,13 @@ public class Similarity {
 
     /** Calcula la similitud coseno entre dos vectores (pág. 138 del documento) */
     public static double cosine(Map<String, Double> a, Map<String, Double> b) {
-        double dot = 0, normA = 0, normB = 0;
+        double dot = 0;
         for (String term : a.keySet()) {
             double va = a.get(term);
             double vb = b.get(term);
             dot += va * vb;
-            normA += va * va;
-            normB += vb * vb;
         }
-        if (normA == 0 || normB == 0) return 0.0;
-        return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+        return dot;
     }
 
     public static double[][] computeCosineMatrix(Map<String, Map<String, Double>> vectors) {
