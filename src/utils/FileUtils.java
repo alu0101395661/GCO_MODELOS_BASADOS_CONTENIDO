@@ -32,27 +32,17 @@ public class FileUtils {
      * Ignora líneas vacías y comentarios que empiecen por #.
      */
     public static Map<String, String> loadLemmas(String path) throws IOException {
-        Map<String, String> lemmas = new HashMap<>();
-        try (BufferedReader br = Files.newBufferedReader(Path.of(path), StandardCharsets.UTF_8)) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty() || line.startsWith("#")) continue;
-
-                String[] parts;
-                if (line.contains("\t")) {
-                    parts = line.split("\t");
-                } else {
-                    parts = line.split("\\s+");
-                }
-                if (parts.length >= 2) {
-                    String form = parts[0].toLowerCase();
-                    String lemma = parts[1].toLowerCase();
-                    lemmas.put(form, lemma);
-                }
+        String text = Files.readString(Path.of(path));
+        text = text.trim()
+                .replaceAll("[{}\"]", ""); // elimina llaves y comillas
+        Map<String, String> map = new LinkedHashMap<>();
+        for (String pair : text.split(",")) {
+            String[] kv = pair.split(":", 2);
+            if (kv.length == 2) {
+                map.put(kv[0].trim(), kv[1].trim());
             }
         }
-        return lemmas;
+        return map;
     }
 
     /** Guarda un CSV por documento con: índice, término, TF, IDF, TF-IDF */
