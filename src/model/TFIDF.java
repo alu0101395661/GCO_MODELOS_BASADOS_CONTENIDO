@@ -21,7 +21,7 @@ public class TFIDF {
     }
 
     public void compute() {
-        // 🔹 Construir vocabulario
+        //  Construir vocabulario
         Set<String> allTerms = new HashSet<>();
         corpus.values().forEach(allTerms::addAll);
         vocab.addAll(allTerms);
@@ -33,7 +33,7 @@ public class TFIDF {
         }
         
 
-        // 🔹 Calcular IDF = log(N / df)
+        // Calcular IDF = log(N / df)
         for (String term : vocab) {
             int df = 0;
             for (List<String> docTokens : corpus.values()) {
@@ -46,7 +46,7 @@ public class TFIDF {
 
         Map<String, Double> sumVec = new HashMap<>();
 
-        // 🔹 Calcular TF y TF-IDF
+        //  Calcular TF y TF-IDF
         for (String doc : docNames) {
             List<String> tokens = corpus.get(doc);
             Map<String, Long> freq = tokens.stream().collect(Collectors.groupingBy(t -> t, Collectors.counting()));
