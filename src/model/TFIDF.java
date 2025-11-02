@@ -10,6 +10,7 @@ public class TFIDF {
     private final Map<String, Double> idf;
     private final Map<String, Map<String, Double>> tfVectors;
     private final Map<String, Map<String, Double>> tfidfVectors;
+    private final Map<String, Map<String, Double>> vecNomVectors;
 
     public TFIDF(Map<String, List<String>> corpus) {
         this.corpus = corpus;
@@ -18,6 +19,7 @@ public class TFIDF {
         this.idf = new HashMap<>();
         this.tfVectors = new LinkedHashMap<>();
         this.tfidfVectors = new LinkedHashMap<>();
+        this.vecNomVectors = new LinkedHashMap<>();
     }
 
     public void compute() {
@@ -52,15 +54,18 @@ public class TFIDF {
             Map<String, Long> freq = tokens.stream().collect(Collectors.groupingBy(t -> t, Collectors.counting()));
 
             Map<String, Double> tf = new LinkedHashMap<>();
+            Map<String, Double> vecNom = new LinkedHashMap<>();
             Map<String, Double> tfidf = new LinkedHashMap<>();
 
             List<Double> tfValues = new ArrayList<>();
 
             for (String term : vocab) {
                 double tfVal = Math.log10((double) freq.getOrDefault(term, 1L)) + 1;
+                double tfidfVal = tfVal * idf.get(term);
                 if (tfVal == 1) { tfVal = 0; }
                 tfValues.add(tfVal);
                 tf.put(term, tfVal);
+                tfidf.put(term, tfidfVal);
             }
 
             double sumCuad = 0;
@@ -73,12 +78,13 @@ public class TFIDF {
             sumVec.put(doc, sumCuad);
 
             for (String term : vocab) {
-                double tfidfVal = tf.get(term) / sumVec.get(doc);
-                tfidf.put(term, tfidfVal);
+                double vecNomVal = tf.get(term) / sumVec.get(doc);
+                vecNom.put(term, vecNomVal);
             }
 
             tfVectors.put(doc, tf);
             tfidfVectors.put(doc, tfidf);
+            vecNomVectors.put(doc, vecNom);
         }
     }
 
@@ -87,4 +93,5 @@ public class TFIDF {
     public Map<String, Double> getIdf() { return idf; }
     public Map<String, Map<String, Double>> getTfVectors() { return tfVectors; }
     public Map<String, Map<String, Double>> getTfidfVectors() { return tfidfVectors; }
+    public Map<String, Map<String, Double>> getVecNomVectors() { return vecNomVectors; }
 }

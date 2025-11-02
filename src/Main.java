@@ -24,7 +24,7 @@ public class Main {
         TFIDF tfidf = new TFIDF(corpus);
         tfidf.compute();
 
-        double[][] simMatrix = Similarity.computeCosineMatrix(tfidf.getTfidfVectors());
+        double[][] simMatrix = Similarity.computeCosineMatrix(tfidf.getVecNomVectors());
         FileUtils.saveDocumentTables(tfidf, outDir + "/per_document");
         FileUtils.saveSimilarityMatrix(tfidf.getDocNames(), simMatrix, outDir + "/similarity.csv");
 

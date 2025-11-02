@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Similarity {
 
-    /** Calcula la similitud coseno entre dos vectores (pág. 138 del documento) */
+    /** Calcula la similitud coseno entre dos vectores */
     public static double cosine(Map<String, Double> a, Map<String, Double> b) {
         double dot = 0;
         for (String term : a.keySet()) {
