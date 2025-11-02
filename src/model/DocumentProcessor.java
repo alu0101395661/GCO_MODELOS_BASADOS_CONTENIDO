@@ -36,7 +36,6 @@ public class DocumentProcessor {
     private List<String> processText(String text) {
         List<String> tokens = new ArrayList<>();
         Matcher m = tokenPattern.matcher(text.toLowerCase());
-        System.out.println(m);
         while (m.find()) {
             String word = m.group();
             
