@@ -96,6 +96,24 @@ Donde se puede:
 - Visualizar los **Top-N términos por TF-IDF**.
 - Tabla con los **documentos más similares**.
 - **Heatmap** de la matriz de similaridad.
+- Comparar dos documentos y mostrar los términos comunes.  
 
+Se puede seleccionar en el menú lateral si queremos usar los documentos originales de data, o si queremos usar los documentos extra añadidos en data2
 ---
 
+## Corpus extra
+
+Se ha añadido un segundo corpus en (`data2/`), con su salida correspondiente (`output2/`).  
+Este segundo conjunto contiene otros diez textos para evaluar el modelo TF-IDF.
+
+Para ejecutar el modelo con el nuevo corpus:
+
+```bash
+java -cp bin Main data2 word-utils/stop-words-en.txt word-utils/corpus-en.json output2
+```
+
+Esto generará en la carpeta `output2/` los ficheros:
+- `per_document/` → CSV de términos y pesos TF-IDF por documento.
+- `similarity.csv` → matriz de similaridad coseno entre los diez textos del corpus en inglés.
+
+---
