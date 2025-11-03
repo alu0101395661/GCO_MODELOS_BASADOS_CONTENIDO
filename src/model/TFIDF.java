@@ -1,14 +1,14 @@
 package model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TFIDF {
     private final Map<String, List<String>> corpus;
     private final List<String> docNames;
     private final List<String> vocab;
     private final Map<String, Double> idf;
-    private final Map<String, Map<String, Double>> tfVectors;
+    private final Map<String, Map<String, Integer>> tfVectors;
+    private final Map<String, Map<String, Double>> tfPondVectors;
     private final Map<String, Map<String, Double>> tfidfVectors;
     private final Map<String, Map<String, Double>> vecNomVectors;
 
@@ -18,6 +18,7 @@ public class TFIDF {
         this.vocab = new ArrayList<>();
         this.idf = new HashMap<>();
         this.tfVectors = new LinkedHashMap<>();
+        this.tfPondVectors = new LinkedHashMap<>();
         this.tfidfVectors = new LinkedHashMap<>();
         this.vecNomVectors = new LinkedHashMap<>();
     }
@@ -51,7 +52,21 @@ public class TFIDF {
         //  Calcular TF y TF-IDF
         for (String doc : docNames) {
             List<String> tokens = corpus.get(doc);
-            Map<String, Long> freq = tokens.stream().collect(Collectors.groupingBy(t -> t, Collectors.counting()));
+            Map<String, Integer> freq = new HashMap<>();
+            for (String term : vocab ) {
+                int tf = 0;
+                for (String s : tokens) {
+                    if (s.equals(term)) {
+                        tf++;
+                    }
+                }
+
+                if (tf == 0) { continue; }
+
+                freq.put(term, tf);
+            }
+
+            tfVectors.put(doc, freq);
 
             Map<String, Double> tf = new LinkedHashMap<>();
             Map<String, Double> vecNom = new LinkedHashMap<>();
@@ -60,9 +75,10 @@ public class TFIDF {
             List<Double> tfValues = new ArrayList<>();
 
             for (String term : vocab) {
-                double tfVal = Math.log10((double) freq.getOrDefault(term, 1L)) + 1;
+                if (term.equals("a") || term.equals("i")) { continue; }
+                double tfVal = Math.log10((double) freq.getOrDefault(term, 1)) + 1;
                 double tfidfVal = tfVal * idf.get(term);
-                if (tfVal == 1) { tfVal = 0; }
+                if (!freq.containsKey(term)) { tfVal = 0; }
                 tfValues.add(tfVal);
                 tf.put(term, tfVal);
                 tfidf.put(term, tfidfVal);
@@ -78,11 +94,12 @@ public class TFIDF {
             sumVec.put(doc, sumCuad);
 
             for (String term : vocab) {
+                if (term.equals("a") || term.equals("i")) { continue; }
                 double vecNomVal = tf.get(term) / sumVec.get(doc);
                 vecNom.put(term, vecNomVal);
             }
 
-            tfVectors.put(doc, tf);
+            tfPondVectors.put(doc, tf);
             tfidfVectors.put(doc, tfidf);
             vecNomVectors.put(doc, vecNom);
         }
@@ -91,7 +108,8 @@ public class TFIDF {
     public List<String> getDocNames() { return docNames; }
     public List<String> getVocab() { return vocab; }
     public Map<String, Double> getIdf() { return idf; }
-    public Map<String, Map<String, Double>> getTfVectors() { return tfVectors; }
+    public Map<String, Map<String, Integer>> getTfVectors() { return tfVectors; }
+    public Map<String, Map<String, Double>> getTfPondVectors() { return tfPondVectors; }
     public Map<String, Map<String, Double>> getTfidfVectors() { return tfidfVectors; }
     public Map<String, Map<String, Double>> getVecNomVectors() { return vecNomVectors; }
 }
